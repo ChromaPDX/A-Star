@@ -10,6 +10,10 @@
 #define BISHOP_MOVE_COST 7
 // costs based on the unit square and its diagonal, 1:sqrt(2) =~ 1:1.4 == 10:14 == 5:7
 
+#define NEIGHBORHOOD_TYPE 1  // 0:Von Neumann  1:Moore
+
+#define MAX_ITERATIONS 10000 // just incase. prevent infinite loop
+
 #import "AStar.h"
 
 @interface AStar (){
@@ -113,7 +117,7 @@
     
     step = A;
     int iterations = 0;
-    while(!found && iterations < 1000){
+    while(!found && iterations < MAX_ITERATIONS){
         // check if neighbors exist, or are out of bounds.
         BoardLocation *stepLocation = [self LocationFromIndex:step];
         stepColumn = stepLocation.x;
@@ -135,7 +139,7 @@
         if(stepColumn < columns-1 && stepRow > 0) neighborIndex[6] = step - columns + 1;
         if(stepColumn < columns-1 && stepRow < rows-1) neighborIndex[7] = step + columns + 1;
         // if neighbors exist, and are on the open list, calculate cost and set their parent
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < 4+NEIGHBORHOOD_TYPE*4; i++){
             if(neighborIndex[i] != -1 && !openList[neighborIndex[i]] && !closedList[neighborIndex[i]] && !obstacleCells[neighborIndex[i]] ){
                 if(i < 4)
                     gValues[neighborIndex[i]] = gValues[step] + ROOK_MOVE_COST;
@@ -172,7 +176,7 @@
 //                pathArray[i] = pathIndex;
                 pathIndex = parentIndex[pathIndex];
                 i++;
-            } while (pathIndex != A && i < 2000);
+            } while (pathIndex != A && i < MAX_ITERATIONS);
 //            *sizeOfArray = i;
             return pathArray;
         }
@@ -199,7 +203,7 @@
     
     step = A;
     int iterations = 0;
-    while(!found && iterations < 1000){
+    while(!found && iterations < MAX_ITERATIONS){
         // check if neighbors exist, or are out of bounds.
         BoardLocation *stepLocation = [self LocationFromIndex:step];
         stepColumn = stepLocation.x;
@@ -221,7 +225,7 @@
         if(stepColumn < columns-1 && stepRow > 0) neighborIndex[6] = step - columns + 1;
         if(stepColumn < columns-1 && stepRow < rows-1) neighborIndex[7] = step + columns + 1;
         // if neighbors exist, and are on the open list, calculate cost and set their parent
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < 4+NEIGHBORHOOD_TYPE*4; i++){
             if(neighborIndex[i] != -1 && !openList[neighborIndex[i]] && !closedList[neighborIndex[i]] && !obstacleCells[neighborIndex[i]] ){
                 parentIndex[neighborIndex[i]] = step;
                 openList[neighborIndex[i]] = true;
