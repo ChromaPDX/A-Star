@@ -89,20 +89,20 @@
         openList[i] = false;
         closedList[i] = false;
     }
-    //    int start[2] = {A%columns, (int)A/columns};
+//    int start[2] = {A%columns, (int)A/columns};
     int end[2] = {B%columns, (int)B/columns};
     for(int c = 0; c < columns; c++){
         for(int r = 0; r < rows; r++){
             hValues[c+r*columns] = abs(end[0]-c) + abs(end[1]-r);
         }
     }
-    //    printf("\n");
-    //    for(int c = 0; c < columns; c++){
-    //        for(int r = 0; r < rows; r++){
-    //            printf("%d ",hValues[c+r*columns]);
-    //        }
-    //        printf("\n");
-    //    }
+//    printf("\n");
+//    for(int c = 0; c < columns; c++){
+//        for(int r = 0; r < rows; r++){
+//            printf("%d ",hValues[c+r*columns]);
+//        }
+//        printf("\n");
+//    }
     
     // check neighbors, add children to cell, when finished, close this cell
     int step, stepRow, stepColumn, neighborIndex[4];
