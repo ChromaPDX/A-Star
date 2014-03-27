@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Robby Kraft. All rights reserved.
 //
 
-#define MOVE_COST 1
+#define ROOK_MOVE_COST 5
+#define BISHOP_MOVE_COST 7
+// costs based on the unit square and its diagonal, 1:sqrt(2) =~ 1:1.4 == 10:14 == 5:7
 
 #import "AStar.h"
 
@@ -105,7 +107,7 @@
 //    }
     
     // check neighbors, add children to cell, when finished, close this cell
-    int step, stepRow, stepColumn, neighborIndex[4];
+    int step, stepRow, stepColumn, neighborIndex[8];
     gValues[A] = 0;
     openList[A] = true;
     
@@ -120,14 +122,25 @@
         neighborIndex[1] = -1;
         neighborIndex[2] = -1;
         neighborIndex[3] = -1;
+        neighborIndex[4] = -1;
+        neighborIndex[5] = -1;
+        neighborIndex[6] = -1;
+        neighborIndex[7] = -1;
         if(stepColumn > 0) neighborIndex[0] = step - 1;
         if(stepColumn < columns-1) neighborIndex[1] = step + 1;
         if(stepRow > 0) neighborIndex[2] = step - columns;
         if(stepRow < rows-1) neighborIndex[3] = step + columns;
+        if(stepColumn > 0 && stepRow > 0) neighborIndex[4] = step - columns - 1;
+        if(stepColumn > 0 && stepRow < rows-1) neighborIndex[5] = step + columns - 1;
+        if(stepColumn < columns-1 && stepRow > 0) neighborIndex[6] = step - columns + 1;
+        if(stepColumn < columns-1 && stepRow < rows-1) neighborIndex[7] = step + columns + 1;
         // if neighbors exist, and are on the open list, calculate cost and set their parent
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 8; i++){
             if(neighborIndex[i] != -1 && !openList[neighborIndex[i]] && !closedList[neighborIndex[i]] && !obstacleCells[neighborIndex[i]] ){
-                gValues[neighborIndex[i]] = gValues[step] + MOVE_COST;
+                if(i < 4)
+                    gValues[neighborIndex[i]] = gValues[step] + ROOK_MOVE_COST;
+                else
+                    gValues[neighborIndex[i]] = gValues[step] + BISHOP_MOVE_COST;
                 fValues[neighborIndex[i]] = gValues[neighborIndex[i]] + hValues[neighborIndex[i]];
                 parentIndex[neighborIndex[i]] = step;
                 openList[neighborIndex[i]] = true;
@@ -180,7 +193,7 @@
         closedList[i] = false;
     }
     // check neighbors, add children to cell, when finished, close this cell
-    int step, stepRow, stepColumn, neighborIndex[4];
+    int step, stepRow, stepColumn, neighborIndex[8];
     gValues[A] = 0;
     openList[A] = true;
     
@@ -195,12 +208,20 @@
         neighborIndex[1] = -1;
         neighborIndex[2] = -1;
         neighborIndex[3] = -1;
+        neighborIndex[4] = -1;
+        neighborIndex[5] = -1;
+        neighborIndex[6] = -1;
+        neighborIndex[7] = -1;
         if(stepColumn > 0) neighborIndex[0] = step - 1;
         if(stepColumn < columns-1) neighborIndex[1] = step + 1;
         if(stepRow > 0) neighborIndex[2] = step - columns;
         if(stepRow < rows-1) neighborIndex[3] = step + columns;
+        if(stepColumn > 0 && stepRow > 0) neighborIndex[4] = step - columns - 1;
+        if(stepColumn > 0 && stepRow < rows-1) neighborIndex[5] = step + columns - 1;
+        if(stepColumn < columns-1 && stepRow > 0) neighborIndex[6] = step - columns + 1;
+        if(stepColumn < columns-1 && stepRow < rows-1) neighborIndex[7] = step + columns + 1;
         // if neighbors exist, and are on the open list, calculate cost and set their parent
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 8; i++){
             if(neighborIndex[i] != -1 && !openList[neighborIndex[i]] && !closedList[neighborIndex[i]] && !obstacleCells[neighborIndex[i]] ){
                 parentIndex[neighborIndex[i]] = step;
                 openList[neighborIndex[i]] = true;
